@@ -36,3 +36,9 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python outreach.py
+
+      - name: Enrich contact info for good-fit clinics
+        env:
+          LOCATIONIQ_API_KEY: ${{ secrets.LOCATIONIQ_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python enrich.py
