@@ -42,3 +42,9 @@ jobs:
           LOCATIONIQ_API_KEY: ${{ secrets.LOCATIONIQ_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python enrich.py
+
+      - name: Generate weekly content batch
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python content_agent.py
