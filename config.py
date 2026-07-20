@@ -29,9 +29,14 @@ def _get_secret(key):
 # Both free tier, no credit card required:
 #   Gemini key:     https://aistudio.google.com/apikey
 #   LocationIQ key: https://locationiq.com (free signup, ~5,000 requests/day)
-GEMINI_API_KEY = _get_secret("GEMINI_API_KEY")
-LOCATIONIQ_API_KEY = _get_secret("LOCATIONIQ_API_KEY")
-DATABASE_URL = _get_secret("DATABASE_URL")
+def _clean(value):
+    """Strip stray whitespace/newlines that sneak in via copy-paste."""
+    return value.strip() if value else value
+
+
+GEMINI_API_KEY = _clean(_get_secret("GEMINI_API_KEY"))
+LOCATIONIQ_API_KEY = _clean(_get_secret("LOCATIONIQ_API_KEY"))
+DATABASE_URL = _clean(_get_secret("DATABASE_URL"))
 
 # --- Paths ---
 BASE_DIR = Path(__file__).parent
