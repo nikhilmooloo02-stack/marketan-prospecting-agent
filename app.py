@@ -1,8 +1,8 @@
 """
 MarkeTan Prospecting Dashboard — Streamlit app.
 
-Shows good-fit clinics with their outreach drafts, and lets the user update
-each clinic's outreach status directly from the browser (no command line).
+Shows good-fit clinics with their outreach drafts and contact info, and lets
+the user update each clinic's outreach status directly from the browser.
 
 Run locally with: streamlit run app.py
 """
@@ -23,7 +23,7 @@ def load_clinics():
     rows = conn.execute(
         """
         SELECT id, name, city, fit_score, fit_reasoning,
-               outreach_status, outreach_message
+               outreach_status, outreach_message, phone, website
         FROM clinics
         WHERE fit_label = 'good_fit' AND outreach_status != 'duplicate'
         ORDER BY fit_score DESC
@@ -71,6 +71,15 @@ for clinic in filtered:
         with left:
             st.subheader(clinic["name"])
             st.caption(f"{clinic['city']} — Fit score: {clinic['fit_score']}/100")
+            contact_bits = []
+            if clinic.get("phone"):
+                contact_bits.append(f"📞 {clinic['phone']}")
+            if clinic.get("website"):
+                contact_bits.append(f"🌐 {clinic['website']}")
+            if contact_bits:
+                st.write("  |  ".join(contact_bits))
+            else:
+                st.caption("No contact info found — manual lookup needed")
             st.write(f"**Why it's a fit:** {clinic['fit_reasoning']}")
             with st.expander("Outreach message"):
                 st.write(clinic["outreach_message"])
