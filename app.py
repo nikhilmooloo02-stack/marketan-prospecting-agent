@@ -9,8 +9,25 @@ Run locally with: streamlit run app.py
 import streamlit as st
 
 from db import get_connection
+from config import APP_PASSWORD
 
 st.set_page_config(page_title="MarkeTan Prospects", layout="wide")
+
+if APP_PASSWORD:
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if not st.session_state.authenticated:
+        st.title("MarkeTan Prospecting Dashboard")
+        entered = st.text_input("Password", type="password")
+        if st.button("Enter"):
+            if entered == APP_PASSWORD:
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("Incorrect password")
+        st.stop()
+
 st.title("MarkeTan Prospecting Dashboard")
 st.caption("Clinics found and scored against MarkeTan's ideal-client profile.")
 

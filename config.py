@@ -27,16 +27,46 @@ def _get_secret(key):
 
 # --- API keys (Step 2+ will use these) ---
 # Both free tier, no credit card required:
-#   Gemini key:     https://aistudio.google.com/apikey
-#   LocationIQ key: https://locationiq.com (free signup, ~5,000 requests/day)
+"""
+Central configuration for the MarkeTan Prospecting Agent.
+
+Keep all "things you'll want to tweak" in one place so later steps
+(search, scoring, outreach) don't hardcode values scattered across files.
+"""
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def _get_secret(key):
+    """
+    Reads a secret from Streamlit Cloud's secrets manager if available
+    (when deployed), otherwise falls back to the local .env file.
+    """
+    try:
+        import streamlit as st
+        if key in st.secrets:
+            return st.secrets[key]
+    except Exception:
+        pass
+    return os.getenv(key)
+
+
 def _clean(value):
     """Strip stray whitespace/newlines that sneak in via copy-paste."""
     return value.strip() if value else value
 
 
+# --- API keys (Step 2+ will use these) ---
+# Both free tier, no credit card required:
+#   Gemini key:     https://aistudio.google.com/apikey
+#   LocationIQ key: https://locationiq.com (free signup, ~5,000 requests/day)
 GEMINI_API_KEY = _clean(_get_secret("GEMINI_API_KEY"))
 LOCATIONIQ_API_KEY = _clean(_get_secret("LOCATIONIQ_API_KEY"))
-DATABASE_URL = _clean(_get_secret("DATABASE_URL"))
+DATABASE_URL = _clean(_get_secret("DATABASE_URL"))  # Supabase Postgres connection string
+APP_PASSWORD = _clean(_get_secret("APP_PASSWORD"))  # Dashboard login password
 
 # --- Paths ---
 BASE_DIR = Path(__file__).parent
@@ -44,9 +74,10 @@ DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "prospects.db"
 
 # --- Gemini model for scoring / outreach (Step 3+) ---
-# Flash is the free-tier workhorse — fast, generous quota, well-suited to
-# structured tasks like fit-scoring and short outreach drafts.
+# All gemini-2.5-* models are blocked for new API keys as of July 2026.
+# gemini-3.1-flash-lite (stable, non-preview) is the current bet.
 GEMINI_MODEL = "gemini-3.1-flash-lite"
+
 # --- ICP search targets ---
 # Cities to search. Start narrow (where Tanita can realistically
 # service clients in person if needed), expand later.
