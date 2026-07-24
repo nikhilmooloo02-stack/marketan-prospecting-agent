@@ -90,6 +90,9 @@ Write a proposal (250-350 words) that:
 - Signs off as "{MARKETAN_SENDER_NAME}, {MARKETAN_SENDER_TITLE}"
 - Does NOT invent facts about the clinic beyond what's given
 - Does NOT promise specific guaranteed results for this clinic
+- Does NOT include unsubstantiated flattery about the clinic's reputation, authority,
+  or brand strength unless that's explicitly part of the given fit reasoning — stick
+  to what's actually known (name, location, general category)
 
 Respond with ONLY the proposal text, no preamble, no markdown headers.
 Then on a new line write "PACKAGE: " followed by just the package name you recommended

@@ -49,7 +49,6 @@ def load_clinics():
     conn.close()
     return [dict(r) for r in rows]
 
-
 def update_status(clinic_id, new_status):
     conn = get_connection()
     conn.execute(
@@ -57,8 +56,20 @@ def update_status(clinic_id, new_status):
         (new_status, clinic_id),
     )
     conn.commit()
-    conn.close()
 
+    # If marked as replied, generate a proposal immediately (don't wait for
+    # the weekly automation) — as long as one doesn't already exist.
+    if new_status == "replied":
+        existing = conn.execute(
+            "SELECT id FROM proposals WHERE clinic_id = ?", (clinic_id,)
+        ).fetchall()
+        conn.close()
+        if not existing:
+            with st.spinner("Generating proposal..."):
+                from proposal_agent import run_proposals
+                run_proposals(clinic_id=clinic_id)
+    else:
+        conn.close()
 
 clinics = load_clinics()
 
